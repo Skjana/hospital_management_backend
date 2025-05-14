@@ -3,21 +3,26 @@ package com.java.hospital.management.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name="roles")
+@Table(name = "user")
 @Getter
 @Setter
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class User {
 
     @Id
-    @Column(name = "role_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+    private String firstName;
+    private String lastName;
+    private String emailAddress;
+    private String contactNumber;
+    private String password;
     private Long roleId;
-    @Column(name = "role_name")
-    private String roleName;
-    @Column(name = "is_active")
     private Boolean isActive;
+    private LocalDate registrationDate;
 }
