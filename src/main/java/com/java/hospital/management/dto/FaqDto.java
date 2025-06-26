@@ -1,0 +1,16 @@
+package com.java.hospital.management.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class FaqDto {
+    private String category;
+    private String question;
+    private String answer;
+}

@@ -1,24 +1,19 @@
 package com.java.hospital.management.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "faqs")
+@Table(name = "blood_group")
 @Getter
 @Setter
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class FAQQuestion{
+public class BloodGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String category;
-    private String question;
-    private String answer;
-    private Boolean isDeleted;
-    private LocalDateTime createdDate;
+    private String type;
 }

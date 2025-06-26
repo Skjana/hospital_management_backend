@@ -3,27 +3,26 @@ package com.java.hospital.management.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "patients")
 @Getter
 @Setter
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class User {
-
-
+public class Patients {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long patientId;
     private String firstName;
     private String lastName;
+    private Long age;
+    private String bloodGroup;
     private String emailAddress;
     private String contactNumber;
     private String password;
-    private Long roleId;
-    private Boolean isActive;
-    private LocalDate registrationDate;
+    private LocalDateTime registrationDate;
+    private Boolean isDeleted;
 }
