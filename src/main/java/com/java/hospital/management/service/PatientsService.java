@@ -2,6 +2,7 @@ package com.java.hospital.management.service;
 
 import com.java.hospital.management.constants.ApplicationConstants;
 import com.java.hospital.management.converter.PatientsConverter;
+import com.java.hospital.management.dto.PatientLoginDto;
 import com.java.hospital.management.dto.PatientsDto;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.entity.Patients;
@@ -63,4 +64,9 @@ public class PatientsService{
         return patientsConverter.convert(updatedPatient);
     }
 
+    public PatientLoginDto patientLoginDetail(Long patientId) {
+        Patients patient = patientsRepository.findByPatientIdAndIsDeletedFalse(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        return patientsConverter.convertDto(patient);
+    }
 }

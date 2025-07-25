@@ -1,6 +1,7 @@
 package com.java.hospital.management.agent;
 
 import com.java.hospital.management.converter.StaffConverter;
+import com.java.hospital.management.dto.LoginResponseDto;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.dto.StaffDto;
 import com.java.hospital.management.service.StaffService;
@@ -26,5 +27,13 @@ public class StaffAgenet {
 
     public StaffDto viewStaff(Long staffId) {
         return staffService.viewStaff(staffId);
+    }
+
+    public List<StaffDto> getAllDoctorsList() {
+        return staffService.getAllDoctorsList().stream().map(staffConverter::convert).toList();
+    }
+
+    public LoginResponseDto getStaffLoginDetail(long staffId) {
+        return staffService.getStaffLoginDetail(staffId);
     }
 }

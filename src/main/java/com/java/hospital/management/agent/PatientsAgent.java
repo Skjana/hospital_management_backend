@@ -1,6 +1,7 @@
 package com.java.hospital.management.agent;
 
 import com.java.hospital.management.converter.PatientsConverter;
+import com.java.hospital.management.dto.PatientLoginDto;
 import com.java.hospital.management.dto.PatientsDto;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.service.PatientsService;
@@ -32,4 +33,7 @@ public class PatientsAgent {
         return patientsService.updatePatient(patientId, patientsDto);
     }
 
+    public PatientLoginDto patientLoginDetail(Long patientId) {
+        return patientsService.patientLoginDetail(patientId);
+    }
 }

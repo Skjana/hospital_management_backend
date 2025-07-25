@@ -24,4 +24,5 @@ public class StaffDto {
     private String password;
     private LocalDateTime appointmentDate;
     private Boolean isDeleted;
+    private Long departmentId;
 }

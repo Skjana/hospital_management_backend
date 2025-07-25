@@ -19,9 +19,11 @@ public class Patients {
     private String firstName;
     private String lastName;
     private Long age;
+    private String gender;
     private String bloodGroup;
     private String emailAddress;
     private String contactNumber;
+    private String address;
     private String password;
     private LocalDateTime registrationDate;
     private Boolean isDeleted;

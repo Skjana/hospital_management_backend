@@ -21,8 +21,16 @@ public class Staff {
     private String bloodGroup;
     private String emailAddress;
     private String contactNumber;
-    private Long roleId;
     private String password;
     private LocalDateTime appointmentDate;
     private Boolean isDeleted;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
 }

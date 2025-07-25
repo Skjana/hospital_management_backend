@@ -7,5 +7,4 @@ public class LoginResponseDto {
     private String userId;
     private String userName;
     private String role;
-    private String message;
 }

@@ -16,5 +16,5 @@ public interface PatientsRepository extends JpaRepository<Patients,Long> {
 
     Optional<Patients> findByPatientIdAndIsDeletedFalse(Long patientId);
 
-    Optional<Patients> findByEmailAddressAndPasswordAndIsDeletedFalse(String email, String password);
+    Optional<Patients> findByEmailAddressAndIsDeletedFalse(String email);
 }

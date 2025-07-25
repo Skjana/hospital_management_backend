@@ -1,6 +1,7 @@
 package com.java.hospital.management.controller;
 
 import com.java.hospital.management.agent.RoleAgent;
+import com.java.hospital.management.dto.PaginatedResponse;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.dto.RoleDto;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,14 @@ public class RoleController {
     @PostMapping("/save")
     public ResponseDto saveUserRole(@RequestBody RoleDto roleDto){
         return roleAgent.saveUserRole(roleDto);
+    }
+
+    @GetMapping("/all/pagination")
+    public PaginatedResponse<RoleDto> getAllPaginationUserRoleList(
+            @RequestParam Integer pageNumber,
+            @RequestParam Integer pageSize) {
+        int adjustedPageNumber = Math.max(0, pageNumber - 1);
+        return roleAgent.getAllPaginationUserRoleList(adjustedPageNumber,pageSize);
     }
 
 }

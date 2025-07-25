@@ -16,5 +16,12 @@ public interface StaffsRepository extends JpaRepository<Staff,Long> {
     @Query("SELECT s FROM Staff s WHERE s.isDeleted = false")
     List<Staff> findAllStaffList();
 
-    Optional<Staff> findByEmailAddressAndPasswordAndIsDeletedFalse(String emailAddress, String password);
+    Optional<Staff> findByEmailAddressAndIsDeletedFalse(String emailAddress);
+
+    @Query("SELECT s FROM Staff s WHERE s.isDeleted = false AND s.role.roleId = 2")
+    List<Staff> getAllDoctorsList();
+
+    @Query("SELECT s FROM Staff s WHERE s.isDeleted = false AND s.role.roleId = 2 AND s.department.departmentId = :departmentId")
+    List<Staff> getAllDoctorsByDepartmentId(Long departmentId);
+
 }

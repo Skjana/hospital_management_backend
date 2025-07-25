@@ -1,9 +1,9 @@
 package com.java.hospital.management.service;
 
-import com.java.hospital.management.config.SmsService;
 import com.java.hospital.management.config.TwoFactorCodeGenerator;
 import com.java.hospital.management.dto.LoginDto;
 import com.java.hospital.management.dto.OtpVerificationDto;
+import com.java.hospital.management.dto.ResetPasswordDto;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.entity.Staff;
 import com.java.hospital.management.entity.TwoFactorCode;
@@ -12,6 +12,7 @@ import com.java.hospital.management.repository.StaffsRepository;
 import com.java.hospital.management.repository.TwoFactorCodeRepository;
 import com.java.hospital.management.repository.UserLoginDetailsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,18 +27,26 @@ public class TwoFactorAuthService {
     private final StaffsRepository staffsRepository;
     private final TwoFactorCodeRepository twoFactorCodeRepository;
     private final UserLoginDetailsRepository userLoginDetailsRepository;
+    private final PasswordEncoder passwordEncoder;
+
 //    private final SmsService smsService;
 
     public ResponseDto generateOtp(LoginDto dto) {
 
         String email = dto.getEmailAddress();
-        String password = dto.getPassword();
+        String rawPassword = dto.getPassword();
 
-        Optional<Staff> staff = staffsRepository.findByEmailAddressAndPasswordAndIsDeletedFalse(email, password);
+        Optional<Staff> staffOpt = staffsRepository.findByEmailAddressAndIsDeletedFalse(email);
+        Staff staff = staffOpt.get();
+
+        if (!passwordEncoder.matches(rawPassword, staff.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
         Optional<UserLoginDetails> lastLogin = userLoginDetailsRepository
                 .findTopByUsernameOrderByLoginDateDescLoginTimeDesc(email);
-
         int invalidCount = 1;
+
         if (lastLogin.isPresent()) {
             Boolean lastSuccess = lastLogin.get().getIsSuccess();
             if (lastSuccess != null && !lastSuccess) {
@@ -45,18 +54,18 @@ public class TwoFactorAuthService {
             }
         }
 
-        if (staff.isPresent()) {
+        if (staffOpt.isPresent()) {
             saveLoginAttempt(email, true, 0);
             String otp = TwoFactorCodeGenerator.generateCode();
             TwoFactorCode code = TwoFactorCode.builder()
-                    .staffId(staff.get().getStaffId())
+                    .staffId(staffOpt.get().getStaffId())
                     .code(otp)
                     .generatedAt(LocalDateTime.now())
                     .build();
             twoFactorCodeRepository.save(code);
 //            smsService.sendOtpSms(staff.get().getContactNumber(), otp);
             return ResponseDto.builder()
-                    .id(String.valueOf(staff.get().getStaffId()))
+                    .id(String.valueOf(staffOpt.get().getStaffId()))
                     .message("OTP Sent Successfully.")
                     .build();
         } else {
@@ -101,6 +110,61 @@ public class TwoFactorAuthService {
         return ResponseDto.builder()
                 .id(String.valueOf(latestCode.getStaffId()))
                 .message("OTP verified successfully. Login successful.")
+                .build();
+    }
+
+    public ResponseDto generateResetPasswordOtp(String emailAddress) {
+        Optional<Staff> staffOpt = staffsRepository.findByEmailAddressAndIsDeletedFalse(emailAddress);
+
+        if (staffOpt.isPresent()) {
+            Staff staff = staffOpt.get();
+            String otp = TwoFactorCodeGenerator.generateCode();
+            TwoFactorCode code = TwoFactorCode.builder()
+                    .staffId(staff.getStaffId())
+                    .code(otp)
+                    .generatedAt(LocalDateTime.now())
+                    .build();
+            twoFactorCodeRepository.save(code);
+
+            return ResponseDto.builder()
+                    .id(String.valueOf(staff.getStaffId()))
+                    .message("OTP sent to your registered contact number.")
+                    .build();
+        } else {
+            return ResponseDto.builder()
+                    .message("No active account found with this email.")
+                    .build();
+        }
+    }
+
+    public ResponseDto resetPasswordWithOtp(ResetPasswordDto dto) {
+        String otp = dto.getOtp();
+        String newPassword = dto.getNewPassword();
+
+        Optional<TwoFactorCode> latestCodeOpt = twoFactorCodeRepository
+                .findTopByCodeOrderByGeneratedAtDesc(otp);
+        if (latestCodeOpt.isEmpty()|| !latestCodeOpt.get().getCode().equals(otp)) {
+            return ResponseDto.builder()
+                    .message("Invalid OTP.")
+                    .build();
+        }
+        TwoFactorCode code = latestCodeOpt.get();
+        if (code.getGeneratedAt().plusMinutes(5).isBefore(LocalDateTime.now())) {
+            return ResponseDto.builder()
+                    .message("OTP has expired.")
+                    .build();
+        }
+        Optional<Staff> staffOpt = staffsRepository.findByStaffIdAndIsDeletedFalse(code.getStaffId());
+        if (staffOpt.isEmpty()) {
+            return ResponseDto.builder()
+                    .message("Staff not found.")
+                    .build();
+        }
+        Staff staff = staffOpt.get();
+        staff.setPassword(newPassword);
+        staffsRepository.save(staff);
+        return ResponseDto.builder()
+                .message("Password reset successful.")
                 .build();
     }
 

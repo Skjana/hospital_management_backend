@@ -5,6 +5,9 @@ import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.entity.Role;
 import com.java.hospital.management.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,4 +37,8 @@ public class RoleService {
                 .build();
     }
 
+    public Page<Role> getAllPaginationUserRoleList(int pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return roleRepository.getAllPaginationUserRoleList(pageable);
+    }
 }

@@ -2,15 +2,14 @@ package com.java.hospital.management.service;
 
 import com.java.hospital.management.constants.ApplicationConstants;
 import com.java.hospital.management.converter.StaffConverter;
+import com.java.hospital.management.dto.LoginResponseDto;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.dto.StaffDto;
-import com.java.hospital.management.entity.Patients;
 import com.java.hospital.management.entity.Staff;
 import com.java.hospital.management.repository.StaffsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -47,6 +46,20 @@ public class StaffService {
         Staff staff = staffsRepository.findByStaffIdAndIsDeletedFalse(staffId)
                 .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffId));
         return staffConverter.convert(staff);
+    }
+
+    public List<Staff> getAllDoctorsList() {
+        return staffsRepository.getAllDoctorsList();
+    }
+
+    public LoginResponseDto getStaffLoginDetail(long staffId) {
+        Staff staff = staffsRepository.findByStaffIdAndIsDeletedFalse(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found with ID: " + staffId));
+        LoginResponseDto response = new LoginResponseDto();
+        response.setUserId(String.valueOf(staff.getStaffId()));
+        response.setUserName(staff.getFirstName() + " " + staff.getLastName());
+        response.setRole(staff.getRole() != null ? staff.getRole().getRoleName() : "Unknown");
+        return response;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.java.hospital.management.controller;
+package com.java.hospital.management.service;
 
 import com.java.hospital.management.config.TwoFactorCodeGenerator;
 import com.java.hospital.management.dto.LoginDto;
@@ -11,6 +11,7 @@ import com.java.hospital.management.repository.PatientsRepository;
 import com.java.hospital.management.repository.TwoFactorCodeRepository;
 import com.java.hospital.management.repository.UserLoginDetailsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,17 +22,25 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PatientsTwoFactorAuthService {
-
     private final PatientsRepository patientsRepository;
     private final TwoFactorCodeRepository twoFactorCodeRepository;
     private final UserLoginDetailsRepository userLoginDetailsRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseDto generateOtp(LoginDto loginDto) {
 
         String email = loginDto.getEmailAddress();
-        String password = loginDto.getPassword();
+        String rawPassword = loginDto.getPassword();
 
-        Optional<Patients> patientOpt = patientsRepository.findByEmailAddressAndPasswordAndIsDeletedFalse(email, password);
+        Optional<Patients> patientOpt = patientsRepository.findByEmailAddressAndIsDeletedFalse(email);
+        if (patientOpt.isEmpty()) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+        Patients patient = patientOpt.get();
+        if (!passwordEncoder.matches(rawPassword, patient.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
         Optional<UserLoginDetails> lastLogin = userLoginDetailsRepository
                 .findTopByUsernameOrderByLoginDateDescLoginTimeDesc(email);
 
@@ -99,5 +108,4 @@ public class PatientsTwoFactorAuthService {
                 .message("OTP verified successfully. Login successful.")
                 .build();
     }
-
 }

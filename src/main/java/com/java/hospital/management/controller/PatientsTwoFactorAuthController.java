@@ -4,6 +4,7 @@ package com.java.hospital.management.controller;
 import com.java.hospital.management.dto.LoginDto;
 import com.java.hospital.management.dto.OtpVerificationDto;
 import com.java.hospital.management.dto.ResponseDto;
+import com.java.hospital.management.service.PatientsTwoFactorAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,6 +1,7 @@
 package com.java.hospital.management.controller;
 
 import com.java.hospital.management.agent.StaffAgenet;
+import com.java.hospital.management.dto.LoginResponseDto;
 import com.java.hospital.management.dto.ResponseDto;
 import com.java.hospital.management.dto.StaffDto;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/staffs")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "http://localhost:4200")
 public class StaffController {
 
     private final StaffAgenet staffAgenet;
@@ -21,9 +21,19 @@ public class StaffController {
         return staffAgenet.saveStaff(staffDto);
     }
 
+    @GetMapping("/detail/{staffId}")
+    public LoginResponseDto getStaffLoginDetail(@PathVariable long staffId){
+        return staffAgenet.getStaffLoginDetail(staffId);
+    }
+
     @GetMapping("/all")
     public List<StaffDto> getAllStaffList(){
         return staffAgenet.getAllStaffList();
+    }
+
+    @GetMapping("/all/doctors")
+    public List<StaffDto> getAllDoctorsList(){
+        return staffAgenet.getAllDoctorsList();
     }
 
     @GetMapping("/{staffId}")

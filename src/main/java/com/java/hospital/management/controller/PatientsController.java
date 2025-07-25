@@ -1,6 +1,7 @@
 package com.java.hospital.management.controller;
 
 import com.java.hospital.management.agent.PatientsAgent;
+import com.java.hospital.management.dto.PatientLoginDto;
 import com.java.hospital.management.dto.PatientsDto;
 import com.java.hospital.management.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,9 @@ public class PatientsController {
         return patientsAgent.updatePatient(patientId, patientsDto);
     }
 
+    @GetMapping("/detail/{patientId}")
+    public PatientLoginDto patientLoginDetail(@PathVariable Long patientId){
+        return patientsAgent.patientLoginDetail(patientId);
+    }
 
 }

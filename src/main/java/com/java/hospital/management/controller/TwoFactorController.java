@@ -1,14 +1,9 @@
 package com.java.hospital.management.controller;
 
-import com.java.hospital.management.dto.LoginDto;
-import com.java.hospital.management.dto.OtpVerificationDto;
-import com.java.hospital.management.dto.ResponseDto;
+import com.java.hospital.management.dto.*;
 import com.java.hospital.management.service.TwoFactorAuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/2fa")
@@ -27,8 +22,14 @@ public class TwoFactorController {
         return twoFactorAuthService.verifyOtp(dto);
     }
 
+    @PostMapping("/resetPassword/sendOtp")
+    public ResponseDto sendResetPasswordOtp(@RequestBody ResetPasswordRequestDto dto) {
+        return twoFactorAuthService.generateResetPasswordOtp(dto.getEmailAddress());
+    }
 
-
-
+    @PostMapping("/resetPassword/confirm")
+    public ResponseDto resetPassword(@RequestBody ResetPasswordDto dto) {
+        return twoFactorAuthService.resetPasswordWithOtp(dto);
+    }
 
 }
